@@ -10,6 +10,8 @@ grp = f.create_group("Data")
 
 # Create a temperature dataset with two dimensions
 dset = grp.create_dataset("temperature", shape=shape, dtype="f")
+dset.attrs["long_name"] = "air_temperature"
+dset.attrs["units"] = "K"
 
 # Testing
 print(dset[:,:])
