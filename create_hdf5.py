@@ -12,13 +12,13 @@ with h5py.File(filename, "w") as f:
     grp = f.create_group("Data")
 
     # Create dimension variables
-    level = grp.create_dataset("level", shape=(5,), dtype="f")
+    level = grp.create_dataset("level", shape=(shape[1],), dtype="f")
     level[:] = [1000., 925., 850., 700., 500.]
     level.attrs["long_name"] = "pressure_level"
     level.attrs["units"] = "hPa"
 
-    point = grp.create_dataset("point", shape=(shape[1],), dtype="i")
-    point[:] = np.arange(shape[1])
+    point = grp.create_dataset("point", shape=(shape[0],), dtype="i")
+    point[:] = np.arange(shape[0])
     point.attrs["long_name"] = "point_index"
     point.attrs["units"] = "none"
 
