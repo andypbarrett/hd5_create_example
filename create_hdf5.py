@@ -4,8 +4,8 @@ import numpy as np
 import h5py
 
 filename = "test.h5"
-shape = (5, 10)
-dims = ["level", "point"]
+shape = (10, 5)
+dims = ["point", "level"]
 
 # Create a file with one group and two 2D datasets
 with h5py.File(filename, "w") as f:
@@ -26,6 +26,8 @@ with h5py.File(filename, "w") as f:
     dset = grp.create_dataset("temperature", shape=shape, dtype="f")
     dset.attrs["long_name"] = "air_temperature"
     dset.attrs["units"] = "K"
+    dset.dims[0].attach_scale(point)
+    dset.dims[1].attach_scale(level)
 
 # Testing
 with h5py.File(filename, "r") as f:
