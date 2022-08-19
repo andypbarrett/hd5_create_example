@@ -4,30 +4,49 @@ import numpy as np
 import h5py
 
 filename = "test.h5"
-shape = (10, 5)
+npoint = 10
+nlevel = 5
 dims = ["point", "level"]
 
-# Create a file with one group and two 2D datasets
+# Create a file with one group and two datasets
 with h5py.File(filename, "w") as f:
     grp = f.create_group("Data")
 
     # Create dimension variables
-    level = grp.create_dataset("level", shape=(shape[1],), dtype="f")
+    level = grp.create_dataset("level", shape=(nlevel,), dtype="f")
     level[:] = [1000., 925., 850., 700., 500.]
     level.attrs["long_name"] = "pressure_level"
     level.attrs["units"] = "hPa"
+    level.make_scale("level")
 
-    point = grp.create_dataset("point", shape=(shape[0],), dtype="i")
-    point[:] = np.arange(shape[0])
+    point = grp.create_dataset("point", shape=(npoint,), dtype="i")
+    point[:] = np.arange(npoint)
     point.attrs["long_name"] = "point_index"
     point.attrs["units"] = "none"
+    point.make_scale("point")
 
     # Create a temperature dataset with two dimensions in the Data group
-    dset = grp.create_dataset("temperature", shape=shape, dtype="f")
-    dset.attrs["long_name"] = "air_temperature"
-    dset.attrs["units"] = "K"
-    dset.dims[0].attach_scale(point)
-    dset.dims[1].attach_scale(level)
+    tair = grp.create_dataset("temperature", shape=(npoint, nlevel), dtype="f")
+    tair.attrs["long_name"] = "air_temperature"
+    tair.attrs["units"] = "K"
+    tair.dims[0].attach_scale(point)
+    tair.dims[1].attach_scale(level)
+    tair.dims[0].label = "point"
+    tair.dims[1].label = "level"
+
+    # Create a precipitation dataset with dimension points
+    prcp = grp.create_dataset("precipitation", shape=(npoint,), dtype="f")
+    prcp.attrs["long_name"] = "precipitation"
+    prcp.attrs["units"] = "kg m**-2"
+    prcp.dims[0].attach_scale(point)
+    prcp.dims[0].label = "point"
+
+    # Add data
+    # Adds temperature data by level
+    for lev in np.arange(nlevel):
+        tair[:, lev] = np.arange(npoint) + (lev*10)
+    # Adds precip
+    prcp[:] = np.arange(prcp[:].size)
 
 # Testing
 with h5py.File(filename, "r") as f:
