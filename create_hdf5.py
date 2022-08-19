@@ -6,6 +6,7 @@ filename = "test.h5"
 shape = (5, 10)
 dims = ["level", "point"]
 
+# Create a file with one group and two 2D datasets
 with h5py.File(filename, "w") as f:
     grp = f.create_group("Data")
 
