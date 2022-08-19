@@ -1,4 +1,4 @@
-'''An example script to create a multi-dimensional HDF5 file'''
+"""An example script to create a multi-dimensional HDF5 file"""
 
 import h5py
 
